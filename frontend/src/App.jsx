@@ -1055,14 +1055,14 @@ function LandingPageView({ onNavigate, onOpenDashboard, activeCodeLang, setActiv
   };
 
   const codeSnippets = {
-    curl: `curl -X POST https://signoratoken.vercel.app/api/v1/auth/otp/send/ \\
+    curl: `curl -X POST https://signora-4471.onrender.com/api/v1/auth/otp/send/ \\
   -H "X-API-Key: ak_live_79a29e19b5c391" \\
   -H "Content-Type: application/json" \\
   -d '{"email":"alex@example.com"}'`,
     javascript: `import axios from 'axios';
 
 // Call Signora directly from your trusted Backend
-const response = await axios.post('https://signoratoken.vercel.app/api/v1/auth/otp/send/', {
+const response = await axios.post('https://signora-4471.onrender.com/api/v1/auth/otp/send/', {
   email: 'alex@example.com'
 }, {
   headers: {
@@ -1076,7 +1076,7 @@ import requests
 
 # Backend invocation with Signora Secret Key
 res = requests.post(
-    "https://signoratoken.vercel.app/api/v1/auth/otp/send/",
+    "https://signora-4471.onrender.com/api/v1/auth/otp/send/",
     headers={"X-API-Key": os.environ["SIGNORA_API_KEY"]},
     json={"email": "alex@example.com"}
 )
@@ -2020,7 +2020,7 @@ function DocumentationView({ onNavigate, docsSection, setDocsSection, showToast,
               </p>
 
               <div className="rounded-xl bg-zinc-950 text-white p-4 font-mono text-xs overflow-x-auto border border-zinc-800">
-{`curl -X POST https://signoratoken.vercel.app/api/v1/auth/otp/send/ \\
+{`curl -X POST https://signora-4471.onrender.com/api/v1/auth/otp/send/ \\
   -H "X-API-Key: ak_live_••••••••" \\
   -H "Content-Type: application/json" \\
   -d '{"email": "alex@example.com"}'`}
@@ -2028,7 +2028,7 @@ function DocumentationView({ onNavigate, docsSection, setDocsSection, showToast,
 
               <h2 className="text-xl font-bold pt-4">Step 3: Verify the 6-Digit Code</h2>
               <div className="rounded-xl bg-zinc-950 text-white p-4 font-mono text-xs overflow-x-auto border border-zinc-800">
-{`curl -X POST https://signoratoken.vercel.app/api/v1/auth/otp/verify/ \\
+{`curl -X POST https://signora-4471.onrender.com/api/v1/auth/otp/verify/ \\
   -H "X-API-Key: ak_live_••••••••" \\
   -H "Content-Type: application/json" \\
   -d '{"email": "alex@example.com", "otp": "492015"}'`}
