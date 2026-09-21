@@ -1,0 +1,506 @@
+SIGNORA / AUTHENTICATOR - PROJECT AND API GUIDE
+================================================
+
+1. WHAT THIS BACKEND DOES
+-------------------------
+This Django REST API lets a developer create a Signora account, create one or
+more client applications, issue API keys for those applications, and offer
+authentication to each application's end users.
+
+There are TWO separate authentication systems. They must never be confused.
+
+    Developer authentication                  End-user authentication
+    ------------------------                  -----------------------
+    Model: accounts.User                      Model: authentication.EndUser
+    Used by: Signora dashboard/API owner      Used by: customer of an application
+    Auth: password or OAuth                   Auth: email OTP or OAuth
+    Token: Django SimpleJWT                   Token: custom end-user JWT
+    Header: Authorization: Bearer <token>     Header to start: X-API-Key: <key>
+    URL area: /api/v1/accounts/               URL area: /api/v1/auth/
+
+
+2. HIGH-LEVEL ARCHITECTURE
+--------------------------
+
+                         +------------------------+
+                         | Developer / Dashboard  |
+                         +-----------+------------+
+                                     |
+                  developer JWT     |  creates/manages applications
+                                     v
+ +----------------+     +------------------------+      +------------------+
+ | Google/GitHub  |<--->| Signora Django Backend |<---->| SQLite database  |
+ +----------------+     +-----------+------------+      +------------------+
+                                     |
+                     application API key + end-user APIs
+                                     v
+                         +------------------------+
+                         | Developer's Web/Mobile |
+                         | Application            |
+                         +-----------+------------+
+                                     |
+                                     v
+                         +------------------------+
+                         | End user / Customer    |
+                         +------------------------+
+
+
+3. MAIN DATA OBJECTS
+--------------------
+
+accounts.User
+    A Signora developer. Has username, unique email, password/is_active, and
+    can own many applications.
+
+applications.Application
+    A customer-facing product registered by a developer. Important fields are
+    UUID id, name, website_url, environment (development or production), and
+    owner.
+
+applications.APIKey
+    A credential for one Application. The original raw key is returned only
+    when created. The database stores only its SHA-256 hash and a short prefix.
+    A revoked key cannot be used.
+
+authentication.EndUser
+    A customer identity belonging to exactly one Application. The same email
+    can exist independently for two different applications.
+
+authentication.OTP
+    A hashed six-digit, one-time login code for an EndUser. It expires, allows
+    at most five verification attempts, and is invalidated when a new OTP is
+    sent.
+
+authentication.OAuthState / accounts.DeveloperOAuthState
+    Separate, signed, short-lived, one-use records that protect OAuth callback
+    requests from CSRF and replay attacks. End-user OAuth state is tied to an
+    Application; developer OAuth state is not.
+
+
+4. BASE URL AND AUTHENTICATION HEADERS
+--------------------------------------
+
+Local base URL:
+    http://localhost:8000
+
+Developer protected routes require:
+    Authorization: Bearer <developer-access-token>
+
+End-user start routes require an application's active API key:
+    X-API-Key: ak_test_...  or  ak_live_...
+
+OAuth callback routes are public because Google/GitHub redirect a browser to
+them. Their signed, single-use state parameter authenticates the callback.
+
+
+5. COMPLETE ENDPOINT INVENTORY
+------------------------------
+
+5.1 Developer account endpoints (/api/v1/accounts/)
+
+POST /api/v1/accounts/signup/
+    Purpose: Create a developer account using username, email, and password.
+    Auth: Public.
+    Request JSON:
+        {"username": "maya", "email": "maya@example.com", "password": "safe-password-123"}
+    Success: 201 Created; returns success, message, and developer id/username/email.
+    Typical use: A new founder signs up for Signora before creating an app.
+
+POST /api/v1/accounts/login/
+    Purpose: Log in a developer using the existing SimpleJWT login endpoint.
+    Auth: Public.
+    Request JSON:
+        {"username": "maya", "password": "safe-password-123"}
+    Success: 200 OK; returns access and refresh tokens.
+    Typical use: The Signora dashboard obtains a token before calling
+    /api/v1/applications/.
+
+POST /api/v1/accounts/token/refresh/
+    Purpose: Exchange a valid developer refresh token for a new developer
+    access token.
+    Auth: Public; the refresh token is the credential.
+    Request JSON:
+        {"refresh": "<developer-refresh-token>"}
+    Success: 200 OK; returns a new access token.
+
+GET /api/v1/accounts/oauth/google/start/
+    Purpose: Begin developer sign-up/login through Google.
+    Auth: Public.
+    Success: 200 OK; returns an authorization_url. Redirect the browser to it.
+    Requirements: GOOGLE_OAUTH_CLIENT_ID and GOOGLE_OAUTH_CLIENT_SECRET.
+
+GET /api/v1/accounts/oauth/google/callback/?code=<code>&state=<state>
+    Purpose: Complete a developer Google OAuth authorization.
+    Auth: Public callback protected by one-time state.
+    Success: 200 OK; returns developer user data and SimpleJWT access/refresh
+    tokens.
+    Rules: Google must provide a verified email. An existing accounts.User with
+    that email is used; otherwise a new developer account is created.
+
+GET /api/v1/accounts/oauth/github/start/
+    Purpose: Begin developer sign-up/login through GitHub.
+    Auth: Public.
+    Success: 200 OK; returns an authorization_url.
+    Requirements: GITHUB_DEVELOPER_CLIENT_ID and
+    GITHUB_DEVELOPER_CLIENT_SECRET. Separate GitHub credentials avoid callback
+    URL conflicts with end-user OAuth.
+
+GET /api/v1/accounts/oauth/github/callback/?code=<code>&state=<state>
+    Purpose: Complete a developer GitHub OAuth authorization.
+    Auth: Public callback protected by one-time state.
+    Success: 200 OK; returns developer user data and SimpleJWT access/refresh
+    tokens.
+    Rules: GitHub must provide a verified primary email.
+
+
+5.2 Application management endpoints (/api/v1/applications/)
+All routes in this section require a valid developer JWT in Authorization.
+The API only exposes applications owned by that logged-in developer.
+
+GET /api/v1/applications/
+    Purpose: List the developer's applications, newest first.
+    Success: 200 OK; {"success": true, "applications": [...]}.
+    Typical use: Populate the dashboard's application selector.
+
+POST /api/v1/applications/
+    Purpose: Create an application.
+    Request JSON example:
+        {"name": "Storefront", "website_url": "https://shop.example.com", "environment": "production"}
+    Success: 201 Created; returns the new application with a UUID id.
+    Typical use: A developer adds the web store that will use Signora login.
+
+GET /api/v1/applications/<application_id>/
+    Purpose: Fetch one owned application.
+    Success: 200 OK; returns application details.
+    Failure: 404 if the UUID does not exist or belongs to another developer.
+
+PATCH /api/v1/applications/<application_id>/
+    Purpose: Partially update name, website_url, or environment.
+    Request JSON example:
+        {"environment": "production"}
+    Success: 200 OK; returns updated details.
+    Typical use: Move a project from testing to production.
+
+DELETE /api/v1/applications/<application_id>/
+    Purpose: Permanently delete an owned application.
+    Success: 204 No Content.
+    Effect: Related API keys and end users are removed by database cascading.
+
+GET /api/v1/applications/<application_id>/api-keys/
+    Purpose: List API keys for an owned application.
+    Success: 200 OK; returns ids, names, key prefixes, usage time, revoked state,
+    and creation time. It NEVER returns the raw secret key.
+
+POST /api/v1/applications/<application_id>/api-keys/
+    Purpose: Create an API key for an owned application.
+    Request JSON:
+        {"name": "Production web frontend"}
+    Success: 201 Created; returns the key's metadata plus the raw key exactly
+    once. Store this raw value immediately in a secure server-side secret store.
+    Typical use: The developer creates a live key for the Storefront backend.
+
+DELETE /api/v1/applications/<application_id>/api-keys/<key_id>/
+    Purpose: Revoke an API key without deleting its audit/metadata record.
+    Success: 204 No Content.
+    Effect: The key can no longer start OTP or end-user OAuth authentication.
+    Typical use: A key was accidentally exposed or an old deployment is retired.
+
+
+5.3 End-user authentication endpoints (/api/v1/auth/)
+
+POST /api/v1/auth/otp/send/
+    Purpose: Create/reuse an end user for the calling application and email a
+    six-digit sign-in code.
+    Auth: X-API-Key required.
+    Request JSON:
+        {"email": "alex@example.com", "name": "Alex"}
+    Success: 200 OK.
+    Notes: Name is optional. Sending again invalidates the prior active code.
+    Requests are throttled by OTP_RESEND_SECONDS (default 60 seconds).
+
+POST /api/v1/auth/otp/verify/
+    Purpose: Validate the latest OTP and issue end-user tokens.
+    Auth: X-API-Key required; must be for the same application.
+    Request JSON:
+        {"email": "alex@example.com", "otp": "123456"}
+    Success: 200 OK; returns the end user and an end-user access/refresh token.
+    Failure examples: no active OTP, expired OTP, five failed attempts, wrong
+    code, inactive end user, or API key for a different application.
+
+POST /api/v1/auth/token/refresh/
+    Purpose: Refresh an end-user access token.
+    Auth: Public; a valid end-user refresh token is required in the body.
+    Request JSON:
+        {"refresh": "<end-user-refresh-token>"}
+    Success: 200 OK; returns a new end-user token pair.
+    Important: This is NOT the developer token refresh endpoint. End-user
+    tokens use END_USER_TOKEN_SECRET and include application-specific claims.
+
+GET /api/v1/auth/oauth/google/start/
+    Purpose: Start Google sign-in for an end user of a particular application.
+    Auth: X-API-Key required.
+    Success: 200 OK; returns authorization_url.
+    Requirements: GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, and the
+    registered callback configured through OAUTH_CALLBACK_URL.
+
+GET /api/v1/auth/oauth/google/callback/?code=<code>&state=<state>
+    Purpose: Finish end-user Google OAuth.
+    Auth: Public callback protected by application-bound one-time state.
+    Success: 200 OK; returns EndUser and end-user token pair.
+    Rule: Google must return a verified email.
+
+GET /api/v1/auth/oauth/github/start/
+    Purpose: Start GitHub sign-in for an end user of a particular application.
+    Auth: X-API-Key required.
+    Success: 200 OK; returns authorization_url.
+    Requirements: GITHUB_OAUTH_CLIENT_ID, GITHUB_OAUTH_CLIENT_SECRET, and
+    the registered end-user GitHub callback URL.
+
+GET /api/v1/auth/oauth/github/callback/?code=<code>&state=<state>
+    Purpose: Finish end-user GitHub OAuth.
+    Auth: Public callback protected by application-bound one-time state.
+    Success: 200 OK; returns EndUser and end-user token pair.
+    Rule: GitHub must return a verified primary email.
+
+
+5.4 Administrative interface
+
+GET /admin/
+    Django administration site. It is intended for staff users and is separate
+    from the REST API. Its normal Django session login is used.
+
+
+6. CORE API FLOWS WITH REAL-WORLD SITUATIONS
+--------------------------------------------
+
+FLOW A: NEW DEVELOPER CREATES A SHOP APPLICATION
+
+Situation: Maya owns a shop and wants passwordless login for shop customers.
+
+    Maya              Signora API                  Database
+     |                    |                           |
+     | POST signup        | create accounts.User      |
+     |------------------->|-------------------------->|
+     | 201 account        |                           |
+     |<-------------------|                           |
+     | POST login         | verify password           |
+     |------------------->|                           |
+     | access + refresh   |                           |
+     |<-------------------|                           |
+     | POST applications/ | create Application         |
+     | Bearer access      |-------------------------->|
+     |<-------------------| 201 application UUID      |
+     | POST api-keys/     | hash key; store hash       |
+     |------------------->|-------------------------->|
+     | raw ak_live_...    |                           |
+     |<-------------------| (shown only this time)     |
+
+Result: Maya configures the raw API key in her shop server. She must not put a
+live key into public browser JavaScript or commit it to source control.
+
+
+FLOW B: END USER SIGNS IN WITH EMAIL OTP
+
+Situation: Alex visits Maya's Storefront and enters alex@example.com.
+
+    Alex      Storefront server          Signora API              Email
+     |               |                       |                     |
+     | enter email   |                       |                     |
+     |-------------->| POST otp/send        |                     |
+     |               | X-API-Key             |                     |
+     |               |---------------------->| create/reuse user   |
+     |               |                       | create hashed OTP   |
+     |               |                       |-------------------->|
+     |               |                       | 6-digit code        |
+     |<-------------------------------------------------------------|
+     | enter code    | POST otp/verify       |                     |
+     |-------------->|---------------------->| validate one-time OTP|
+     |               |<----------------------| end-user JWT pair   |
+     | signed in     |                       |                     |
+     |<--------------|                       |                     |
+
+Result: Alex has an EndUser record only within Storefront. The same Alex email
+can separately register with another Signora application.
+
+
+FLOW C: END USER SIGNS IN WITH GOOGLE OR GITHUB
+
+Situation: Alex selects "Continue with Google" in Storefront.
+
+    Browser/App       Storefront       Signora          Google/GitHub
+        |                 |               |                  |
+        | login button    |               |                  |
+        |---------------->| GET oauth/start (X-API-Key)       |
+        |                 |-------------->| create state       |
+        |                 |<--------------| authorization URL  |
+        | redirect browser to provider ----------------------->|
+        |                 |               | user approves      |
+        |<-----------------------------------------------------|
+        | provider redirects callback?code&state -> Signora    |
+        |---------------------------------->| consume state     |
+        |                                   | exchange code     |
+        |                                   |------------------>|
+        |                                   | verified identity |
+        |                                   |<------------------|
+        |<----------------------------------| end-user JWT pair |
+
+Result: Signora trusts the provider's verified email, never an email supplied
+by a browser. State cannot be reused after the callback.
+
+
+FLOW D: DEVELOPER SIGNS IN WITH GOOGLE OR GITHUB
+
+Situation: Maya chooses "Continue with GitHub" for the Signora dashboard.
+
+    Browser             Signora accounts API          GitHub
+       | GET developer OAuth start                       |
+       |-------------------->| create developer state   |
+       |<--------------------| authorization URL         |
+       | redirect -------------------------------------->|
+       | GitHub callback with code + state               |
+       |<------------------------------------------------|
+       | callback request -->| validate and consume state|
+       |                     | exchange code / get email |
+       |                     |-------------------------->|
+       |                     | verified primary email    |
+       |                     |<--------------------------|
+       |                     | find/create accounts.User |
+       |<--------------------| developer JWT pair         |
+
+Result: Maya receives a developer SimpleJWT token, which can manage
+applications. This does not create an EndUser or use end-user token settings.
+
+
+FLOW E: API KEY LEAK OR DEPLOYMENT RETIREMENT
+
+Situation: Maya accidentally commits an ak_live_ key to a public repository.
+
+    1. Sign in as Maya using developer authentication.
+    2. DELETE the leaked key at the API-key detail endpoint.
+    3. Create a replacement API key.
+    4. Update the Storefront server's secret configuration.
+    5. Redeploy the Storefront server.
+
+After revocation, requests made with the old key receive an invalid API-key
+response and cannot start an end-user login.
+
+
+7. TOKEN AND CREDENTIAL BOUNDARIES
+----------------------------------
+
+Developer token
+    Created by /accounts/login/, developer OAuth callbacks, and refreshed by
+    /accounts/token/refresh/. Use it only for developer-protected application
+    management routes.
+
+End-user token
+    Created after OTP/OAuth at /auth/ and refreshed by /auth/token/refresh/.
+    It contains end-user and application information and is signed with the
+    end-user secret. It is not accepted as a developer JWT.
+
+API key
+    Identifies the Application initiating an end-user authentication flow. It
+    is not a user session and cannot create/manage applications.
+
+    +------------------+-------------------------+--------------------------+
+    | Credential       | Identifies              | Main use                 |
+    +------------------+-------------------------+--------------------------+
+    | Developer JWT    | accounts.User           | Dashboard/app management |
+    | API key          | Application             | Begin customer login     |
+    | End-user JWT     | EndUser + Application   | Customer session         |
+    +------------------+-------------------------+--------------------------+
+
+
+8. CONFIGURATION (ENVIRONMENT VARIABLES)
+----------------------------------------
+
+Never place actual secrets in documentation, source code, or client-side code.
+
+Required core setting:
+    SECRET_KEY
+
+Developer JWT lifetime settings:
+    DEVELOPER_ACCESS_TOKEN_MINUTES       (default: 60)
+    DEVELOPER_REFRESH_TOKEN_DAYS         (default: 7)
+
+End-user token settings:
+    END_USER_TOKEN_SECRET                (defaults to SECRET_KEY if omitted)
+    END_USER_TOKEN_ISSUER                (default: authenticator)
+    END_USER_TOKEN_AUDIENCE              (default: authenticator-end-user)
+    END_USER_ACCESS_TOKEN_MINUTES        (default: 15)
+    END_USER_REFRESH_TOKEN_DAYS          (default: 7)
+
+OTP settings:
+    OTP_LIFETIME_MINUTES                 (default: 5)
+    OTP_RESEND_SECONDS                   (default: 60)
+    EMAIL_BACKEND
+    DEFAULT_FROM_EMAIL
+
+End-user OAuth settings:
+    OAUTH_CALLBACK_URL
+    GOOGLE_OAUTH_CLIENT_ID
+    GOOGLE_OAUTH_CLIENT_SECRET
+    GITHUB_OAUTH_CLIENT_ID
+    GITHUB_OAUTH_CLIENT_SECRET
+
+Developer OAuth settings:
+    DEVELOPER_OAUTH_CALLBACK_URL
+       Default: http://localhost:8000/api/v1/accounts/oauth/{provider}/callback/
+    GOOGLE_OAUTH_CLIENT_ID
+    GOOGLE_OAUTH_CLIENT_SECRET
+    GITHUB_DEVELOPER_CLIENT_ID
+    GITHUB_DEVELOPER_CLIENT_SECRET
+
+OAuth state setting:
+    OAUTH_STATE_LIFETIME_MINUTES         (default: 10)
+
+Register the exact callback URLs with Google/GitHub. Developer and end-user
+GitHub OAuth should use separate credentials when the provider permits only one
+callback URL per OAuth app.
+
+
+9. SECURITY BEHAVIOUR AND OPERATING RULES
+-----------------------------------------
+
+* API keys are generated securely, stored as hashes, and exposed only once.
+* API-key revocation is immediate for future authentication requests.
+* OTP values are hashed before storage; they are one-use and expire.
+* OTP verification uses constant-time hash comparison and limits attempts.
+* OAuth state has a signature, an expiry, and one-time database consumption.
+* OAuth identities come from Google/GitHub, not from a frontend email field.
+* Google email must be verified; GitHub must supply a verified primary email.
+* Inactive developer/end-user accounts cannot complete authentication.
+* Never log authorization codes, access tokens, raw API keys, or client secrets.
+* Use HTTPS in production and set production callback URLs accordingly.
+
+
+10. COMMON RESPONSE CODES
+-------------------------
+
+200 OK              Successful read, login, verification, or refresh.
+201 Created         Developer account, application, or API key created.
+204 No Content      Application deleted or API key revoked.
+400 Bad Request     Invalid input, OTP, OAuth state, missing OAuth code, or denial.
+401 Unauthorized    Missing/invalid API key, invalid credentials, or bad token.
+403 Forbidden       Valid identity but inactive account.
+404 Not Found       Unsupported provider, unavailable application, or key not owned.
+429 Too Many        OTP was requested again before the resend interval passed.
+503 Service Unavailable
+                    OAuth provider credentials are not configured on the server.
+
+
+11. LOCAL DEVELOPMENT CHECKLIST
+-------------------------------
+
+1. Configure .env without committing it.
+2. Run: python manage.py migrate
+3. Run: python manage.py runserver
+4. Create a developer account or use developer OAuth.
+5. Log in and save the developer access token.
+6. Create an application and then an API key.
+7. Use that API key from the application backend to test OTP or end-user OAuth.
+8. Run checks when changing code:
+       python manage.py check
+       python manage.py test
+
+END OF GUIDE
