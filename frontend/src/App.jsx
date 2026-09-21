@@ -37,7 +37,10 @@ import {
   LogOut,
   Plus,
   ExternalLink,
-  Search
+  Search,
+  MoveRight,
+  LogIn,
+  UserPlus
 } from 'lucide-react';
 
 // Dynamic Smooth Scroll & Motion Styles Injector
@@ -235,7 +238,7 @@ const DeveloperDoodleArt = ({ isDark = false }) => {
             ? 'bg-[#FFC400] text-black border-[#FFC400]'
             : 'bg-black text-[#FFC400] border-zinc-900'
         }`}>
-          ⚡ ZERO BOILERPLATE
+          ⚡ LESS BOILERPLATE
         </div>
 
         {/* Illustrated SVG Doodle Art Workspace */}
@@ -374,14 +377,22 @@ const DeveloperDoodleArt = ({ isDark = false }) => {
 
             {/* Central Mini Ribbon Logo */}
             <g transform="translate(45, 23) scale(0.39)">
-              <path
-                d="M26 34C26 21.8 35.8 12 48 12C63 12 76 23.5 76 38.5C76 49.5 68 57.5 56 62.5C48 65.8 41 68 35 72C29 76 26 81.5 26 88C26 88 22 75 31 66C38 59 47 56 56 52C63 49 67 44.5 67 38C67 28.5 58.5 21 48 21C39.5 21 34 26 34 33C34 35.5 30 36 26 34Z"
-                fill="#FFC400"
-              />
-              <path
-                d="M74 66C74 78.2 64.2 88 52 88C37 88 24 76.5 24 61.5C24 50.5 32 42.5 44 37.5C52 34.2 59 32 65 28C71 24 74 18.5 74 12C74 12 78 25 69 34C62 41 53 44 44 48C37 51 33 55.5 33 62C33 71.5 41.5 79 52 79C60.5 79 66 74 66 67C66 64.5 70 64 74 66Z"
-                fill="#E4E4E7"
-              />
+            <circle
+  cx="60"
+  cy="50"
+  r="73"
+  fill="white"
+/>
+
+<image
+  href="/favicon.png"
+  x="14"
+  y="1"
+  width="82"
+  height="106"
+  preserveAspectRatio="xMidYMid meet"
+/>
+ 
             </g>
 
             {/* Feature Badges */}
@@ -450,7 +461,7 @@ const DeveloperDoodleArt = ({ isDark = false }) => {
             className="doodle-flow-line"
           />
 
-          {/* Sticky Note: Multi-Tenant Guarantee */}
+          {/* Sticky Note: Multi-Application Guarantee */}
           <g transform="translate(135, 238) rotate(3)">
             <rect
               x="0"
@@ -463,7 +474,7 @@ const DeveloperDoodleArt = ({ isDark = false }) => {
               strokeWidth="1.5"
             />
             <text x="10" y="18" fontSize="8.5" fontWeight="bold" fill={isDark ? "#FFC400" : "#854d0e"}>
-              📌 Multi-Tenant Guarantee
+              📌 Multi-Application Guarantee
             </text>
             <text x="10" y="30" fontSize="7.5" fill={isDark ? "#d4d4d8" : "#713f12"}>
               • Zero cross-app leakage
@@ -506,26 +517,11 @@ const SignoraLogo = ({ showText = true, isDark = false, className = "" }) => {
     <div className={`inline-flex items-center gap-3 select-none group ${className}`}>
       {/* Animated Dual-Ribbon S Glyph */}
       <div className="relative w-8 h-8 sm:w-9 sm:h-9 shrink-0 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
-        <svg
-          viewBox="0 0 100 100"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-full drop-shadow-[0_2px_8px_rgba(255,196,0,0.25)]"
-        >
-          {/* Top Ribbon (Signature Yellow #FFC400) */}
-          <path
-            d="M26 34C26 21.8 35.8 12 48 12C63 12 76 23.5 76 38.5C76 49.5 68 57.5 56 62.5C48 65.8 41 68 35 72C29 76 26 81.5 26 88C26 88 22 75 31 66C38 59 47 56 56 52C63 49 67 44.5 67 38C67 28.5 58.5 21 48 21C39.5 21 34 26 34 33C34 35.5 30 36 26 34Z"
-            fill="#FFC400"
-            className="transition-all duration-300 group-hover:brightness-110"
-          />
-
-          {/* Bottom Interlocking Ribbon (Charcoal / Contrast Tone) */}
-          <path
-            d="M74 66C74 78.2 64.2 88 52 88C37 88 24 76.5 24 61.5C24 50.5 32 42.5 44 37.5C52 34.2 59 32 65 28C71 24 74 18.5 74 12C74 12 78 25 69 34C62 41 53 44 44 48C37 51 33 55.5 33 62C33 71.5 41.5 79 52 79C60.5 79 66 74 66 67C66 64.5 70 64 74 66Z"
-            fill={isDark ? "#E4E4E7" : "#18181B"}
-            className="transition-all duration-300"
-          />
-        </svg>
+      <img
+  src="/favicon.png"
+  alt="Signora Logo"
+  class="w-full h-full object-contain drop-shadow-[0_2px_8px_rgba(255,196,0,0.25)]"
+/>
       </div>
 
       {/* Brand Typographic Wordmark & Tagline */}
@@ -539,9 +535,7 @@ const SignoraLogo = ({ showText = true, isDark = false, className = "" }) => {
             >
               Signora
             </span>
-            <span className="text-[9px] font-mono text-zinc-500 font-bold leading-none">
-              TM
-            </span>
+         
           </div>
           <span
             className={`text-[8px] sm:text-[9px] font-extrabold tracking-[0.24em] uppercase transition-colors duration-300 mt-0.5 ${
@@ -1097,7 +1091,7 @@ print(res.json()) # {'success': True, 'message': 'OTP sent successfully.'}`
         <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FFC400] text-black">
           NEW
         </span>
-        <span>Signora v2.4 Django REST Auth Engine is Live with Multi-Tenant Scoping.</span>
+        <span>Signora v2.4 Django REST Auth Engine is Live with Multi-Application Scoping.</span>
         <button onClick={() => onNavigate('docs')} className="underline hover:text-white font-medium ml-1">
           Explore Docs &rarr;
         </button>
@@ -1266,7 +1260,7 @@ print(res.json()) # {'success': True, 'message': 'OTP sent successfully.'}`
                   <Check className="w-4 h-4 text-emerald-500" /> Django REST Powered
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <Check className="w-4 h-4 text-emerald-500" /> Multi-Tenant Isolation
+                  <Check className="w-4 h-4 text-emerald-500" /> Multi-Application Isolation
                 </span>
                 <span className="flex items-center gap-1.5">
                   <Check className="w-4 h-4 text-emerald-500" /> Zero Frontend Leakage
@@ -1295,7 +1289,7 @@ print(res.json()) # {'success': True, 'message': 'OTP sent successfully.'}`
               How Signora Works
             </h2>
             <p className={isDark ? 'text-zinc-400' : 'text-zinc-600'}>
-              Set up multi-tenant, enterprise-grade authentication in less than five minutes.
+              Set up multi-Application, enterprise-grade authentication in less than five minutes.
             </p>
           </div>
 
@@ -1369,7 +1363,7 @@ print(res.json()) # {'success': True, 'message': 'OTP sent successfully.'}`
               { icon: Code, title: 'GitHub OAuth', desc: 'Developer-friendly GitHub social authentication tailored for developer platforms, open-source communities, and technical tools.' },
               { icon: ShieldCheck, title: 'Secure Tokens (JWT)', desc: 'Receive standardized, digitally signed JWT tokens upon successful verification. Complete with automated token refresh cycles.' },
               { icon: Key, title: 'Application API Keys', desc: 'Securely identify and authorize your backend application with Signora using cryptographically hashed, prefix-labeled API keys.' },
-              { icon: Layers, title: 'Multi-Tenant Users', desc: 'Complete data isolation. Users registered under Application A are completely separated from Application B, with strict zero-leakage boundaries.' },
+              { icon: Layers, title: 'Multi-Application Users', desc: 'Complete data isolation. Users registered under Application A are completely separated from Application B, with strict zero-leakage boundaries.' },
             ].map((feat, idx) => {
               const IconComp = feat.icon;
               return (
@@ -1737,7 +1731,7 @@ function PricingView({ onNavigate, isDark, toggleTheme }) {
             </div>
             <div className="text-4xl font-extrabold">Custom</div>
             <ul className="space-y-3 text-sm text-zinc-400">
-              <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-500" /> Dedicated Single-Tenant Cluster</li>
+              <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-500" /> Dedicated Single-Application Cluster</li>
               <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-500" /> Custom SAML / SSO Providers</li>
               <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-500" /> SOC2 & HIPAA compliance pack</li>
             </ul>
@@ -1807,7 +1801,7 @@ function DocumentationView({ onNavigate, docsSection, setDocsSection, showToast,
       group: 'Security & Compliance',
       items: [
         { id: 'sec_keys', label: 'API Key Security Guide' },
-        { id: 'sec_isolation', label: 'Multi-Tenant Isolation' },
+        { id: 'sec_isolation', label: 'Multi-Application Isolation' },
         { id: 'sec_ratelimit', label: 'Rate Limiting Limits' }
       ]
     }
@@ -2096,13 +2090,19 @@ const [name, setName] = useState('');
             disabled={isLoading}
             className="w-full py-3 rounded-xl bg-[#FFC400] hover:bg-[#F0B800] text-zinc-950 font-bold text-sm shadow-sm transition flex items-center justify-center gap-2"
           >
-            {isLoading ? (
-              <RefreshCw className="w-4 h-4 animate-spin" />
-            ) : mode === 'login' ? (
-              'Sign In &rarr;'
-            ) : (
-              'Create Account &rarr;'
-            )}
+          {isLoading ? (
+  <RefreshCw className="w-4 h-4 animate-spin" />
+) : mode === 'login' ? (
+  <>
+    Sign In
+    <LogIn className="w-4 h-4" />
+  </>
+) : (
+  <>
+    Create Account
+    <UserPlus className="w-4 h-4" />
+  </>
+)}
           </button>
         </form>
 
@@ -2476,7 +2476,7 @@ function DashboardOverviewTab({ developerUser, selectedApp, dashboardSummary, se
       {/* Numerical Stats Counters with smooth AnimatedCounter */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {[
-          { title: 'Applications', num: metrics.applications, sub: 'Active tenants' },
+          { title: 'Applications', num: metrics.applications, sub: 'Active Applications' },
           { title: 'Active Users', num: metrics.active_users, sub: 'Active end users', isGood: true },
           { title: 'Successful Auth', num: metrics.successful_auth, sub: 'Verified OTP and OAuth logins', isGood: true },
           { title: 'OTP Verifications', num: metrics.otp_verifications, sub: 'Verified OTP requests' },
@@ -2589,7 +2589,7 @@ function DashboardAppsTab({ apps, selectedApp, setSelectedAppId, onOpenCreateApp
         <div>
           <h1 className="text-2xl font-extrabold">Applications</h1>
           <p className="text-xs text-zinc-400 mt-1">
-            Manage your isolated tenant applications, URLs, and environments.
+            Manage your isolated Application applications, URLs, and environments.
           </p>
         </div>
         <button
@@ -2771,7 +2771,7 @@ function DashboardUsersTab({ selectedApp, users, isDark }) {
         <div>
           <h1 className="text-2xl font-extrabold">Application Users</h1>
           <p className="text-xs text-zinc-400 mt-1">
-            End users registered strictly under <strong className={isDark ? 'text-white' : 'text-zinc-800'}>{selectedApp.name}</strong>. Multi-tenant isolation.
+            End users registered strictly under <strong className={isDark ? 'text-white' : 'text-zinc-800'}>{selectedApp.name}</strong>. Multi-Application isolation.
           </p>
         </div>
 
@@ -3158,7 +3158,7 @@ function DashboardSettingsTab({ selectedApp, developerUser, onUpdateApplication,
       <div>
         <h1 className="text-2xl font-extrabold">Settings</h1>
         <p className="text-xs text-zinc-400 mt-1">
-          Manage developer profile, application credentials, and tenant configuration.
+          Manage developer profile, application credentials, and Application configuration.
         </p>
       </div>
 
@@ -3279,7 +3279,7 @@ function CreateApplicationModal({ onClose, onCreate, isDark }) {
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-bold">Create Application</h3>
-            <p className="text-xs text-zinc-400">Register a new isolated multi-tenant application.</p>
+            <p className="text-xs text-zinc-400">Register a new isolated multi-Application application.</p>
           </div>
           <button onClick={onClose} className="text-zinc-400 hover:text-white">
             <X className="w-5 h-5" />
