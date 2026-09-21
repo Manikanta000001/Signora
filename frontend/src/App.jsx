@@ -1215,13 +1215,7 @@ print(res.json()) # {'success': True, 'message': 'OTP sent successfully.'}`
             
             {/* Left Column: Smoothly Animated Hero Typography */}
             <div className="lg:col-span-7 space-y-6 animate-fade-in-up">
-              <div className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all duration-300 hover:border-[#FFC400] ${
-                isDark
-                  ? 'bg-zinc-900/90 border-zinc-800 text-zinc-300'
-                  : 'bg-zinc-100 border-zinc-200/80 text-zinc-800'
-              }`}>
-                
-              </div>
+
 
               <h1 className={`text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1] ${
                 isDark ? 'text-white' : 'text-zinc-950'
@@ -1551,7 +1545,7 @@ print(res.json()) # {'success': True, 'message': 'OTP sent successfully.'}`
             }`}>
               <div className="flex items-center justify-between">
                 <span className="px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-400 flex items-center gap-1.5">
-                  <XCircle className="w-4 h-4 text-rose-500" /> ❌ Don't do this
+                  <XCircle className="w-4 h-4 text-rose-500" />  Don't do this
                 </span>
                 <span className="text-xs font-mono text-rose-400">Frontend Risk</span>
               </div>
@@ -1579,7 +1573,7 @@ print(res.json()) # {'success': True, 'message': 'OTP sent successfully.'}`
             }`}>
               <div className="flex items-center justify-between">
                 <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500" /> ✅ Do this (Server Proxy)
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Do this (Server Proxy)
                 </span>
                 <span className="text-xs font-mono text-emerald-400">Secure Pattern</span>
               </div>
