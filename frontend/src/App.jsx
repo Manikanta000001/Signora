@@ -517,11 +517,13 @@ const SignoraLogo = ({ showText = true, isDark = false, className = "" }) => {
     <div className={`inline-flex items-center gap-3 select-none group ${className}`}>
       {/* Animated Dual-Ribbon S Glyph */}
       <div className="relative w-8 h-8 sm:w-9 sm:h-9 shrink-0 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
-      <img
-  src="/favicon.png"
-  alt="Signora Logo"
-  class="w-full h-full object-contain drop-shadow-[0_2px_8px_rgba(255,196,0,0.25)]"
-/>
+      <div className="w-full h-full rounded-md bg-[#FAFAF7] flex items-center justify-center">
+  <img
+    src="/favicon.png"
+    alt="Signora Logo"
+    className="w-full h-full object-contain"
+  />
+</div>
       </div>
 
       {/* Brand Typographic Wordmark & Tagline */}
@@ -1053,14 +1055,14 @@ function LandingPageView({ onNavigate, onOpenDashboard, activeCodeLang, setActiv
   };
 
   const codeSnippets = {
-    curl: `curl -X POST http://localhost:8000/api/v1/auth/otp/send/ \\
+    curl: `curl -X POST https://signoratoken.vercel.app/api/v1/auth/otp/send/ \\
   -H "X-API-Key: ak_live_79a29e19b5c391" \\
   -H "Content-Type: application/json" \\
   -d '{"email":"alex@example.com"}'`,
     javascript: `import axios from 'axios';
 
 // Call Signora directly from your trusted Backend
-const response = await axios.post('http://localhost:8000/api/v1/auth/otp/send/', {
+const response = await axios.post('https://signoratoken.vercel.app/api/v1/auth/otp/send/', {
   email: 'alex@example.com'
 }, {
   headers: {
@@ -1074,7 +1076,7 @@ import requests
 
 # Backend invocation with Signora Secret Key
 res = requests.post(
-    "http://localhost:8000/api/v1/auth/otp/send/",
+    "https://signoratoken.vercel.app/api/v1/auth/otp/send/",
     headers={"X-API-Key": os.environ["SIGNORA_API_KEY"]},
     json={"email": "alex@example.com"}
 )
@@ -1690,7 +1692,7 @@ function PricingView({ onNavigate, isDark, toggleTheme }) {
               <h3 className="text-xl font-bold">Developer</h3>
               <p className="text-xs text-zinc-400 mt-1">For hobbyists and staging applications.</p>
             </div>
-            <div className="text-4xl font-extrabold">$0 <span className="text-sm font-normal text-zinc-500">/mo</span></div>
+            <div className="text-4xl font-extrabold">₹0 <span className="text-sm font-normal text-zinc-500">/mo</span></div>
             <ul className="space-y-3 text-sm text-zinc-400">
               <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-500" /> Up to 1,000 Active Users</li>
               <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-500" /> 2 Applications</li>
@@ -1711,7 +1713,7 @@ function PricingView({ onNavigate, isDark, toggleTheme }) {
               <h3 className="text-xl font-bold text-white">Startup Pro</h3>
               <p className="text-xs text-zinc-400 mt-1">For growing SaaS products with production load.</p>
             </div>
-            <div className="text-4xl font-extrabold text-white">$49 <span className="text-sm font-normal text-zinc-400">/mo</span></div>
+            <div className="text-4xl font-extrabold text-white">₹500 <span className="text-sm font-normal text-zinc-400">/mo</span></div>
             <ul className="space-y-3 text-sm text-zinc-300">
               <li className="flex items-center gap-2"><Check className="w-4 h-4 text-[#FFC400]" /> Up to 25,000 Active Users</li>
               <li className="flex items-center gap-2"><Check className="w-4 h-4 text-[#FFC400]" /> Unlimited Applications</li>
@@ -1807,6 +1809,122 @@ function DocumentationView({ onNavigate, docsSection, setDocsSection, showToast,
     }
   ];
 
+  const mutedText = isDark ? 'text-zinc-400' : 'text-zinc-600';
+  const cardClass = isDark
+    ? 'bg-zinc-900/70 border-zinc-800'
+    : 'bg-zinc-50 border-zinc-200';
+  const codeClass = 'rounded-xl bg-zinc-950 text-zinc-100 p-4 font-mono text-xs overflow-x-auto border border-zinc-800 whitespace-pre-wrap leading-relaxed';
+
+  const SectionLabel = ({ children }) => (
+    <div className="inline-flex items-center gap-2 text-xs font-mono text-[#B88400] dark:text-[#FFC400] font-semibold bg-[#FFC400]/10 px-2.5 py-1 rounded">
+      {children}
+    </div>
+  );
+
+  const ArchitectureDiagram = () => (
+    <div className={`rounded-2xl border p-5 sm:p-7 overflow-x-auto ${cardClass}`}>
+      <div className="min-w-[570px] space-y-5">
+        <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-[0.16em] text-zinc-500">
+          <span>Authentication request path</span><span className="text-[#B88400]">server-to-server credential</span>
+        </div>
+        <div className="grid grid-cols-[1fr_56px_1.15fr_56px_1fr] items-center gap-2">
+          <div className={`rounded-xl border p-4 ${isDark ? 'bg-zinc-950 border-zinc-700' : 'bg-white border-zinc-200'}`}>
+            <Globe className="w-5 h-5 text-[#D79F00] mb-2" />
+            <div className="font-bold text-sm">Your client</div>
+            <div className="text-xs text-zinc-500 mt-1">Browser or mobile app</div>
+          </div>
+          <div className="flex flex-col items-center text-[#D79F00]"><MoveRight className="w-6 h-6" /><span className="text-[9px] text-zinc-500 mt-1">sign in</span></div>
+          <div className="rounded-xl border-2 border-[#FFC400] bg-[#FFC400]/10 p-4 shadow-sm">
+            <ShieldCheck className="w-5 h-5 text-[#B88400] mb-2" />
+            <div className="font-bold text-sm">Your backend</div>
+            <div className="text-xs text-zinc-600 dark:text-zinc-400 mt-1">Holds <code>X-API-Key</code> in a secret store</div>
+          </div>
+          <div className="flex flex-col items-center text-[#D79F00]"><MoveRight className="w-6 h-6" /><span className="text-[9px] text-zinc-500 mt-1">authenticate</span></div>
+          <div className={`rounded-xl border p-4 ${isDark ? 'bg-zinc-950 border-zinc-700' : 'bg-white border-zinc-200'}`}>
+            <Lock className="w-5 h-5 text-[#D79F00] mb-2" />
+            <div className="font-bold text-sm">Signora API</div>
+            <div className="text-xs text-zinc-500 mt-1">OTP, OAuth & tokens</div>
+          </div>
+        </div>
+        <div className={`rounded-lg px-4 py-3 text-xs ${isDark ? 'bg-zinc-950 text-zinc-400' : 'bg-white text-zinc-600'}`}>
+          The browser never receives your application key. It only receives the application session or end-user token your backend chooses to return.
+        </div>
+      </div>
+    </div>
+  );
+
+  const TokenDiagram = () => (
+    <div className={`rounded-2xl border p-5 sm:p-7 ${cardClass}`}>
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 text-center">
+        <div className={`flex-1 rounded-xl p-4 border ${isDark ? 'bg-zinc-950 border-zinc-800' : 'bg-white border-zinc-200'}`}><Key className="w-5 h-5 mx-auto text-[#D79F00] mb-2" /><b className="text-sm">Application key</b><p className="text-xs text-zinc-500 mt-1">Identifies one application</p></div>
+        <MoveRight className="w-5 h-5 shrink-0 mx-auto text-[#D79F00] rotate-90 sm:rotate-0" />
+        <div className={`flex-1 rounded-xl p-4 border ${isDark ? 'bg-zinc-950 border-zinc-800' : 'bg-white border-zinc-200'}`}><CheckCircle2 className="w-5 h-5 mx-auto text-emerald-500 mb-2" /><b className="text-sm">Verified user</b><p className="text-xs text-zinc-500 mt-1">OTP or OAuth succeeds</p></div>
+        <MoveRight className="w-5 h-5 shrink-0 mx-auto text-[#D79F00] rotate-90 sm:rotate-0" />
+        <div className="flex-1 rounded-xl p-4 border border-[#FFC400] bg-[#FFC400]/10"><Lock className="w-5 h-5 mx-auto text-[#B88400] mb-2" /><b className="text-sm">End-user tokens</b><p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1">Carry the application scope</p></div>
+      </div>
+    </div>
+  );
+
+  const docsContent = {
+    intro: (
+      <div className="space-y-7">
+        <SectionLabel><BookOpen className="w-3.5 h-3.5" /> INTRODUCTION</SectionLabel>
+        <div><h1 className="text-3xl font-extrabold">Authentication that belongs to your product</h1><p className={`${mutedText} leading-relaxed mt-3`}>Signora gives each of your applications a separate authentication boundary. Use it to send passwordless email codes, start Google or GitHub sign-in, and issue end-user access and refresh tokens without building identity infrastructure from scratch.</p></div>
+        <div className="grid sm:grid-cols-3 gap-3">
+          {[['Create', 'Set up an application in the developer console.', Layers], ['Connect', 'Keep its API key on your backend.', Key], ['Authenticate', 'Use OTP or OAuth for your customers.', ShieldCheck]].map(([title, description, Icon]) => <div key={title} className={`border rounded-xl p-4 ${cardClass}`}><Icon className="w-5 h-5 text-[#D79F00] mb-3"/><h2 className="font-bold text-sm">{title}</h2><p className="text-xs text-zinc-500 leading-relaxed mt-1">{description}</p></div>)}
+        </div>
+        <div className={`border-l-2 border-[#FFC400] pl-4 py-2 text-sm rounded-r-lg ${isDark ? 'bg-zinc-900 text-zinc-300' : 'bg-amber-50 text-zinc-700'}`}><strong>Two credentials, two jobs:</strong> developer tokens manage applications; application API keys start end-user authentication.</div>
+        <h2 className="text-xl font-bold">Start here</h2>
+        <ol className={`${mutedText} text-sm space-y-3 list-decimal list-inside`}><li>Create an application and generate a key.</li><li>Store the raw key in your server environment, not in frontend code.</li><li>Call the OTP or OAuth start endpoint with <code className="font-mono text-[#B88400]">X-API-Key</code>.</li><li>Verify the result and use the returned end-user tokens for your session.</li></ol>
+      </div>
+    ),
+    auth_concepts: (
+      <div className="space-y-7">
+        <SectionLabel><ShieldCheck className="w-3.5 h-3.5" /> ARCHITECTURE</SectionLabel>
+        <div><h1 className="text-3xl font-extrabold">Authentication architecture</h1><p className={`${mutedText} leading-relaxed mt-3`}>Signora separates your customer-facing client from the credential that authorizes authentication requests. Your backend is the trusted bridge.</p></div>
+        <ArchitectureDiagram />
+        <div className="grid sm:grid-cols-2 gap-4"><div><h2 className="font-bold">1. Authenticate the application</h2><p className={`${mutedText} text-sm mt-2 leading-relaxed`}>Signora hashes the supplied application key, finds its active application, and uses that application as the scope for the request.</p></div><div><h2 className="font-bold">2. Authenticate the user</h2><p className={`${mutedText} text-sm mt-2 leading-relaxed`}>OTP verification or an OAuth callback creates or locates the end user within that application, then issues end-user tokens.</p></div></div>
+        <h2 className="text-xl font-bold">Credential and token boundary</h2><TokenDiagram />
+        <div className={`border rounded-xl p-4 text-sm ${cardClass}`}><strong>Important:</strong> An end-user token is not a developer console token. Developer tokens manage resources; end-user tokens represent a signed-in customer for one application.</div>
+      </div>
+    ),
+    api_keys: (
+      <div className="space-y-7">
+        <SectionLabel><Key className="w-3.5 h-3.5" /> CREDENTIALS</SectionLabel>
+        <div><h1 className="text-3xl font-extrabold">API keys & secrets</h1><p className={`${mutedText} leading-relaxed mt-3`}>An API key identifies a single Signora application. Generate keys from that application’s Keys tab and use the key in the <code className="font-mono text-[#B88400]">X-API-Key</code> request header.</p></div>
+        <div className={`border rounded-xl overflow-hidden ${cardClass}`}><div className="grid grid-cols-[130px_1fr] text-sm"><div className="p-4 font-semibold border-b border-r border-zinc-200 dark:border-zinc-800">Format</div><div className="p-4 border-b border-zinc-200 dark:border-zinc-800 font-mono text-xs">ak_live_… for production · ak_test_… otherwise</div><div className="p-4 font-semibold border-r border-zinc-200 dark:border-zinc-800">Storage</div><div className="p-4">Only a SHA-256 hash and a display prefix are retained.</div><div className="p-4 font-semibold border-t border-r border-zinc-200 dark:border-zinc-800">Visibility</div><div className="p-4 border-t border-zinc-200 dark:border-zinc-800">The complete raw key is returned once when created.</div></div></div>
+        <div className={codeClass}>{`POST /api/v1/auth/otp/send/\nX-API-Key: ak_live_your_application_secret\nContent-Type: application/json\n\n{"email":"customer@example.com"}`}</div>
+        <div className={`rounded-xl border p-4 ${isDark ? 'bg-amber-950/20 border-amber-900/50' : 'bg-amber-50 border-amber-200'}`}><div className="flex gap-3"><AlertTriangle className="w-5 h-5 shrink-0 text-amber-600" /><p className="text-sm leading-relaxed">Copy the key into your secret manager immediately. If it is lost, create a new key and update the deployment; the original cannot be retrieved.</p></div></div>
+      </div>
+    ),
+    sec_keys: (
+      <div className="space-y-7">
+        <SectionLabel><Lock className="w-3.5 h-3.5" /> SECURITY GUIDE</SectionLabel>
+        <div><h1 className="text-3xl font-extrabold">API key security guide</h1><p className={`${mutedText} leading-relaxed mt-3`}>Treat an application key like a password for your authentication backend. Anyone holding a valid key can initiate authentication for that application.</p></div>
+        <div className="grid sm:grid-cols-2 gap-4"><div className={`rounded-xl border p-5 ${isDark ? 'bg-emerald-950/20 border-emerald-900/50' : 'bg-emerald-50 border-emerald-200'}`}><CheckCircle2 className="w-5 h-5 text-emerald-600 mb-3"/><h2 className="font-bold">Do</h2><ul className="mt-3 space-y-2 text-sm text-zinc-600 dark:text-zinc-400"><li>Use environment variables or a secret manager.</li><li>Use separate keys for separate deployments.</li><li>Rotate a key after a suspected exposure.</li><li>Revoke retired keys from the console.</li></ul></div><div className={`rounded-xl border p-5 ${isDark ? 'bg-red-950/20 border-red-900/50' : 'bg-red-50 border-red-200'}`}><XCircle className="w-5 h-5 text-red-600 mb-3"/><h2 className="font-bold">Never</h2><ul className="mt-3 space-y-2 text-sm text-zinc-600 dark:text-zinc-400"><li>Commit a key to source control.</li><li>Embed it in browser or mobile code.</li><li>Put it in URLs, analytics, or error reports.</li><li>Log raw keys, tokens, codes, or secrets.</li></ul></div></div>
+        <h2 className="text-xl font-bold">If a key is exposed</h2><ol className={`${mutedText} text-sm space-y-2 list-decimal list-inside`}><li>Revoke the affected key in the application’s Keys tab.</li><li>Create a replacement key and update the server-side secret.</li><li>Review key usage and deployment logs for unexpected activity.</li></ol>
+      </div>
+    ),
+    sec_isolation: (
+      <div className="space-y-7">
+        <SectionLabel><Layers className="w-3.5 h-3.5" /> DATA BOUNDARIES</SectionLabel>
+        <div><h1 className="text-3xl font-extrabold">Multi-application isolation</h1><p className={`${mutedText} leading-relaxed mt-3`}>Every API key resolves to exactly one application. That application is carried through end-user creation, OTP verification, OAuth exchange, token claims, activity, and resource access.</p></div>
+        <div className={`rounded-2xl border p-5 sm:p-7 ${cardClass}`}><div className="grid sm:grid-cols-2 gap-4"><div className="rounded-xl border border-[#FFC400] bg-[#FFC400]/10 p-5"><div className="font-bold">Application A</div><div className="font-mono text-xs text-[#B88400] mt-1">ak_live_A…</div><div className="mt-4 text-sm text-zinc-600 dark:text-zinc-400">Users A · OTPs A · activity A · tokens with application_id A</div></div><div className={`rounded-xl border p-5 ${isDark ? 'bg-zinc-950 border-zinc-700' : 'bg-white border-zinc-200'}`}><div className="font-bold">Application B</div><div className="font-mono text-xs text-zinc-500 mt-1">ak_live_B…</div><div className="mt-4 text-sm text-zinc-600 dark:text-zinc-400">Users B · OTPs B · activity B · tokens with application_id B</div></div></div><div className="mt-4 text-center text-xs font-medium text-red-600">A key from Application B cannot validate a token issued for Application A.</div></div>
+        <div className={`border-l-2 border-[#FFC400] pl-4 py-2 text-sm rounded-r-lg ${isDark ? 'bg-zinc-900 text-zinc-300' : 'bg-amber-50 text-zinc-700'}`}><strong>Same email, separate identity:</strong> the same email address registered in two applications is represented as two independent end users.</div>
+        <p className={`${mutedText} text-sm leading-relaxed`}>Developer management endpoints add another boundary: applications and their keys can only be accessed by their owner’s developer token.</p>
+      </div>
+    ),
+    sec_ratelimit: (
+      <div className="space-y-7">
+        <SectionLabel><Activity className="w-3.5 h-3.5" /> ABUSE PROTECTION</SectionLabel>
+        <div><h1 className="text-3xl font-extrabold">Rate limiting limits</h1><p className={`${mutedText} leading-relaxed mt-3`}>OTP delivery is protected against rapid resend requests. The limit is evaluated within the application and end-user boundary, so one application does not consume another application’s allowance.</p></div>
+        <div className={`border rounded-2xl overflow-hidden ${cardClass}`}><div className="grid grid-cols-[1.25fr_.75fr_1fr] text-xs sm:text-sm"><div className="p-4 font-bold border-b border-zinc-200 dark:border-zinc-800">Operation</div><div className="p-4 font-bold border-b border-zinc-200 dark:border-zinc-800">Limit</div><div className="p-4 font-bold border-b border-zinc-200 dark:border-zinc-800">When exceeded</div><div className="p-4">Send email OTP</div><div className="p-4 font-mono">1 / 60 sec</div><div className="p-4">429 Too Many Requests</div></div></div>
+        <p className={`${mutedText} text-sm leading-relaxed`}>The default resend window is configured as <code className="font-mono text-[#B88400]">OTP_RESEND_SECONDS=60</code>. A successful resend also invalidates the earlier active code. OTPs expire after 5 minutes and allow up to five verification attempts.</p>
+        <div className={`rounded-xl border p-4 ${cardClass}`}><h2 className="font-bold text-sm">Handling 429 responses</h2><p className={`${mutedText} text-sm mt-2`}>Disable the resend button while waiting, show a countdown, and retry only after the window has elapsed. Do not automatically retry in a tight loop.</p></div>
+      </div>
+    ),
+  };
+
   return (
     <div className={`min-h-screen flex flex-col transition-colors ${
       isDark ? 'bg-[#0c0c0e] text-zinc-100' : 'bg-white text-zinc-900'
@@ -1875,7 +1993,7 @@ function DocumentationView({ onNavigate, docsSection, setDocsSection, showToast,
         </aside>
 
         <main className="flex-1 p-8 lg:p-12 overflow-y-auto max-w-3xl space-y-8 animate-fade-in">
-          {docsSection === 'quickstart' ? (
+          {docsContent[docsSection] ? docsContent[docsSection] : docsSection === 'quickstart' ? (
             <div className="space-y-6">
               <div className="inline-flex items-center gap-2 text-xs font-mono text-[#FFC400] font-semibold bg-[#FFC400]/10 px-2.5 py-1 rounded">
                 GETTING STARTED
@@ -1902,7 +2020,7 @@ function DocumentationView({ onNavigate, docsSection, setDocsSection, showToast,
               </p>
 
               <div className="rounded-xl bg-zinc-950 text-white p-4 font-mono text-xs overflow-x-auto border border-zinc-800">
-{`curl -X POST http://localhost:8000/api/v1/auth/otp/send/ \\
+{`curl -X POST https://signoratoken.vercel.app/api/v1/auth/otp/send/ \\
   -H "X-API-Key: ak_live_••••••••" \\
   -H "Content-Type: application/json" \\
   -d '{"email": "alex@example.com"}'`}
@@ -1910,7 +2028,7 @@ function DocumentationView({ onNavigate, docsSection, setDocsSection, showToast,
 
               <h2 className="text-xl font-bold pt-4">Step 3: Verify the 6-Digit Code</h2>
               <div className="rounded-xl bg-zinc-950 text-white p-4 font-mono text-xs overflow-x-auto border border-zinc-800">
-{`curl -X POST http://localhost:8000/api/v1/auth/otp/verify/ \\
+{`curl -X POST https://signoratoken.vercel.app/api/v1/auth/otp/verify/ \\
   -H "X-API-Key: ak_live_••••••••" \\
   -H "Content-Type: application/json" \\
   -d '{"email": "alex@example.com", "otp": "492015"}'`}
