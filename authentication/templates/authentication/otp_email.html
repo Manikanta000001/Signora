@@ -1,0 +1,462 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
+  <meta name="x-apple-disable-message-reformatting" />
+  <title>Signora Auth Passcode - {{application_name}}</title>
+  
+  <style type="text/css">
+    /* Global Reset Styles */
+    html, body {
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      -webkit-text-size-adjust: 100% !important;
+      -ms-text-size-adjust: 100% !important;
+      background-color: #F3F3EE;
+    }
+    table, td {
+      mso-table-lspace: 0pt !important;
+      mso-table-rspace: 0pt !important;
+      border-collapse: collapse !important;
+    }
+    img {
+      border: 0;
+      line-height: 100%;
+      outline: none;
+      text-decoration: none;
+      -ms-interpolation-mode: bicubic;
+    }
+
+    /* Single-Sheet Layout & Responsive Breakpoints */
+    @media only screen and (max-width: 600px) {
+      .outer-shell {
+        padding: 12px 8px !important;
+      }
+      .sheet-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        border-radius: 14px !important;
+      }
+      .sheet-pad {
+        padding-left: 18px !important;
+        padding-right: 18px !important;
+      }
+      .header-pad {
+        padding: 16px 18px !important;
+      }
+      .otp-display-text {
+        font-size: 32px !important;
+        letter-spacing: 6px !important;
+      }
+      .step-column {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        margin-bottom: 8px !important;
+      }
+      .step-spacer {
+        display: none !important;
+      }
+      .app-title-text {
+        font-size: 16px !important;
+      }
+    }
+
+    /* Extra Small Devices */
+    @media only screen and (max-width: 380px) {
+      .otp-display-text {
+        font-size: 26px !important;
+        letter-spacing: 4px !important;
+      }
+      .sheet-pad {
+        padding-left: 14px !important;
+        padding-right: 14px !important;
+      }
+    }
+  </style>
+
+  <!--[if mso]>
+  <style type="text/css">
+    body, table, td, p, a, span, h1, h2, h3 {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+    }
+  </style>
+  <![endif]-->
+</head>
+
+<body style="margin: 0; padding: 0; background-color: #F3F3EE; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: #111111;">
+
+  <!-- Invisible Inbox Preview Snippet -->
+  <div style="display: none; font-size: 1px; color: #F3F3EE; line-height: 1px; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden; mso-hide: all;">
+    {{otp}} is your one-time verification passcode for {{application_name}}. Valid for 5 minutes.
+  </div>
+
+  <!-- Primary Canvas Background Table -->
+  <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #F3F3EE;">
+    <tr>
+      <td align="center" class="outer-shell" style="padding: 28px 12px 40px 12px;">
+
+        <!-- SINGLE UNIFIED SHEET (Uniform 580px width throughout all sections) -->
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" class="sheet-container" style="max-width: 580px; width: 100%; margin: 0 auto; background-color: #FFFFFF; border-radius: 18px; border: 1px solid #E2E2D8; box-shadow: 0 10px 30px rgba(17, 17, 17, 0.05); overflow: hidden;">
+
+          <!-- SECTION 1: DOCKED SHEET HEADER & BRAND IDENTIFIER -->
+          <tr>
+            <td class="header-pad" style="background-color: #111111; padding: 18px 26px; border-bottom: 2px solid #FFC400;">
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                  <!-- Signora Logo Mark -->
+                  <td align="left" style="vertical-align: middle;">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="vertical-align: middle; padding-right: 10px;">
+                          <!-- Signora Geometric Shield SVG Logo -->
+                    <div style="background:#ffffff; border-radius:12px; padding:4px; display:inline-block;">
+  <img
+    src="https://signoratoken.vercel.app/favicon.png"
+    alt="Signora"
+    width="22"
+    height="22"
+    style="display:block; object-fit:contain;"
+  />
+</div>
+                        </td>
+                        <td style="vertical-align: middle;">
+                          <span style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13px; font-weight: 800; letter-spacing: 2px; color: #FFFFFF; text-transform: uppercase;">
+                            SIGNORA
+                          </span>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+
+                  <!-- Authenticated Infrastructure Status Pill -->
+                  <td align="right" style="vertical-align: middle;">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="background-color: #1A1A1A; border: 1px solid #2B2B2B; border-radius: 14px; padding: 4px 10px;">
+                          <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                            <tr>
+                              <td style="padding-right: 6px; vertical-align: middle;">
+                                <div style="width: 6px; height: 6px; background-color: #FFC400; border-radius: 50%;"></div>
+                              </td>
+                              <td style="font-family: 'SF Mono', Consolas, Menlo, monospace; font-size: 10px; font-weight: 700; color: #CCCCCC; letter-spacing: 0.6px; text-transform: uppercase;">
+                                AUTH PROTOCOL
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- SECTION 2: INTEGRATED SECURITY & CRYPTOGRAPHIC TOP ILLUSTRATION -->
+          <tr>
+            <td align="center" style="background-color: #161616; padding: 26px 20px 22px 20px; border-bottom: 1px solid #242424;">
+              <img src="https://signoratoken.vercel.app/email/security-flow.png" width="340" height="96" alt="Secure authentication flow" style="display:block;max-width:100%;height:auto;border:0;" />
+            </td>
+          </tr>
+
+          <!-- SECTION 3: APPLICATION NAME (STRONGEST IDENTITY FOCAL POINT) -->
+          <tr>
+            <td class="sheet-pad" style="padding: 32px 30px 22px 30px; text-align: center;">
+              
+              <!-- Short Purpose Headline -->
+              <h1 style="margin: 0 0 16px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 22px; font-weight: 800; color: #111111; letter-spacing: -0.4px; line-height: 28px;">
+                Verify your application
+              </h1>
+
+              <!-- Dominant App Identification Badge Container -->
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center" style="margin: 0 auto; max-width: 100%;">
+                <tr>
+                  <td style="background-color: #FAFAF7; border: 1px solid #E2E2D6; border-radius: 12px; padding: 12px 22px; box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <!-- Micro Icon -->
+                        <td style="padding-right: 12px; vertical-align: middle;">
+                          <div style="width: 32px; height: 32px; background-color: #111111; border-radius: 8px; text-align: center;">
+                            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" height="100%">
+                              <tr>
+                                <td align="center" style="vertical-align: middle;">
+                                  <img src="https://signoratoken.vercel.app/email/brand-mark.png" width="18" height="18" alt="" style="display:block;border:0;width:18px;height:18px;" />
+                                </td>
+                              </tr>
+                            </table>
+                          </div>
+                        </td>
+                        <!-- App Name Typography -->
+                        <td style="text-align: left; vertical-align: middle;">
+                          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 10px; font-weight: 700; color: #777770; letter-spacing: 1px; text-transform: uppercase;">
+                            REQUESTING SYSTEM
+                          </div>
+                          <div class="app-title-text" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; font-weight: 800; color: #111111;">
+                            {{application_name}}
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Explanatory Context Note -->
+              <p style="margin: 14px auto 0 auto; max-width: 440px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; line-height: 20px; color: #555550;">
+                <strong style="color: #111111;">{{application_name}}</strong> is requesting email authentication to confirm your developer session ownership.
+              </p>
+            </td>
+          </tr>
+
+          <!-- SECTION 4: THE OTP STATION (PRIMARY HIGH-CONTRAST FOCUS) -->
+          <tr>
+            <td class="sheet-pad" style="padding: 0 30px 24px 30px;">
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #111111; border-radius: 14px; border: 1px solid #282828; box-shadow: 0 8px 24px rgba(17, 17, 17, 0.12); overflow: hidden;">
+                
+                <!-- Terminal Header Bar inside OTP Card -->
+                <tr>
+                  <td style="padding: 12px 18px; border-bottom: 1px solid #242424; background-color: #171717;">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                      <tr>
+                        <td align="left" style="vertical-align: middle;">
+                          <span style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11px; font-weight: 800; color: #A0A09A; letter-spacing: 1.5px; text-transform: uppercase;">
+                            ONE-TIME PASSCODE
+                          </span>
+                        </td>
+                        <td align="right" style="vertical-align: middle;">
+                          <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                            <tr>
+                              <td style="padding-right: 6px; vertical-align: middle;">
+                                <img src="https://signoratoken.vercel.app/email/active.png" width="14" height="14" alt="" style="display:block;border:0;width:14px;height:14px;" />
+                              </td>
+                              <td style="font-family: 'SF Mono', Consolas, Menlo, monospace; font-size: 10px; font-weight: 700; color: #FFC400;">
+                                ACTIVE
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- Code Display Value -->
+                <tr>
+                  <td align="center" style="padding: 26px 16px 20px 16px;">
+                    <!-- OTP Display Vault Box -->
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin: 0 auto; max-width: 100%;">
+                      <tr>
+                        <td align="center" style="background-color: #1B1B1B; border: 1px solid #333333; border-top: 1px solid #444444; border-radius: 10px; padding: 14px 28px;">
+                          <span class="otp-display-text" style="font-family: 'SF Mono', SFMono-Regular, Consolas, Monaco, monospace; font-size: 42px; font-weight: 900; color: #FFC400; letter-spacing: 10px; margin-right: -10px; line-height: 1; display: inline-block; user-select: all; -webkit-user-select: all;">
+                            {{otp}}
+                          </span>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- UX Copy Directive -->
+                    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; color: #888882; margin-top: 12px; font-weight: 500;">
+                      Double-click or tap to highlight &amp; copy
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Expiration Warning Strip -->
+                <tr>
+                  <td style="background-color: #161616; border-top: 1px solid #222222; padding: 10px 18px;">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center">
+                      <tr>
+                        <td style="vertical-align: middle; padding-right: 7px;">
+                          <img src="https://signoratoken.vercel.app/email/clock.png" width="16" height="16" alt="" style="display:block;border:0;width:16px;height:16px;" />
+                        </td>
+                        <td style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; font-weight: 600; color: #DDDDDD; vertical-align: middle;">
+                          Passcode expires in <strong style="color: #FFC400;">5 minutes</strong>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+              </table>
+            </td>
+          </tr>
+
+          <!-- SECTION 5: STEP-BY-STEP OTP INSTRUCTIONS PIPELINE -->
+          <tr>
+            <td class="sheet-pad" style="padding: 0 30px 24px 30px;">
+              <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11px; font-weight: 800; color: #777770; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;">
+                How to verify
+              </div>
+
+              <!-- Fluid Responsive 3-Step Grid -->
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                  
+                  <!-- Step 1 -->
+                  <td class="step-column" width="31%" style="vertical-align: top; background-color: #FAFAF7; border: 1px solid #E7E7DE; border-radius: 10px; padding: 12px;">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="width: 20px; height: 20px; background-color: #111111; border-radius: 5px; text-align: center; vertical-align: middle; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 10px; font-weight: 800; color: #FFC400;">
+                          1
+                        </td>
+                        <td style="padding-left: 8px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; font-weight: 700; color: #111111;">
+                          Copy Code
+                        </td>
+                      </tr>
+                    </table>
+                    <p style="margin: 6px 0 0 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; line-height: 16px; color: #666660;">
+                      Copy the 6-digit passcode displayed above.
+                    </p>
+                  </td>
+
+                  <!-- Spacer -->
+                  <td class="step-spacer" width="3.5%" align="center" style="vertical-align: middle;">
+                    <img src="https://signoratoken.vercel.app/email/arrow.png" width="16" height="16" alt="" style="display:block;border:0;width:16px;height:16px;" />
+                  </td>
+
+                  <!-- Step 2 -->
+                  <td class="step-column" width="31%" style="vertical-align: top; background-color: #FAFAF7; border: 1px solid #E7E7DE; border-radius: 10px; padding: 12px;">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="width: 20px; height: 20px; background-color: #111111; border-radius: 5px; text-align: center; vertical-align: middle; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 10px; font-weight: 800; color: #FFC400;">
+                          2
+                        </td>
+                        <td style="padding-left: 8px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; font-weight: 700; color: #111111;">
+                          Return
+                        </td>
+                      </tr>
+                    </table>
+                    <p style="margin: 6px 0 0 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; line-height: 16px; color: #666660;">
+                      Navigate back to {{application_name}}.
+                    </p>
+                  </td>
+
+                  <!-- Spacer -->
+                  <td class="step-spacer" width="3.5%" align="center" style="vertical-align: middle;">
+                    <img src="https://signoratoken.vercel.app/email/arrow.png" width="16" height="16" alt="" style="display:block;border:0;width:16px;height:16px;" />
+                  </td>
+
+                  <!-- Step 3 -->
+                  <td class="step-column" width="31%" style="vertical-align: top; background-color: #FAFAF7; border: 1px solid #E7E7DE; border-radius: 10px; padding: 12px;">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="width: 20px; height: 20px; background-color: #111111; border-radius: 5px; text-align: center; vertical-align: middle; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 10px; font-weight: 800; color: #FFC400;">
+                          3
+                        </td>
+                        <td style="padding-left: 8px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; font-weight: 700; color: #111111;">
+                          Confirm
+                        </td>
+                      </tr>
+                    </table>
+                    <p style="margin: 6px 0 0 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; line-height: 16px; color: #666660;">
+                      Paste code to unlock authenticated session.
+                    </p>
+                  </td>
+
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- SECTION 6: SECURITY REMINDER CALLOUT -->
+          <tr>
+            <td class="sheet-pad" style="padding: 0 30px 24px 30px;">
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #FAFAF6; border-left: 3px solid #111111; border-radius: 0 8px 8px 0; padding: 14px 16px;">
+                <tr>
+                  <td width="22" style="vertical-align: top; padding-right: 12px; padding-top: 2px;">
+                    <img src="https://signoratoken.vercel.app/email/shield.png" width="20" height="20" alt="Security" style="display:block;border:0;width:20px;height:20px;" />
+                  </td>
+                  <td style="vertical-align: top;">
+                    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; font-weight: 800; color: #111111; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 3px;">
+                      Security reminder
+                    </div>
+                    <p style="margin: 0 0 6px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13px; line-height: 18px; color: #444440;">
+                      For your security, never share this verification code with anyone. Signora will never ask you to share your OTP through email, phone, or chat.
+                    </p>
+                    <p style="margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; line-height: 17px; color: #777770;">
+                      If you did not request this verification code, you can safely ignore this email.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Subtle Divider -->
+          <tr>
+            <td class="sheet-pad" style="padding: 0 30px 20px 30px;">
+              <div style="height: 1px; background-color: #EAEAE2; width: 100%;"></div>
+            </td>
+          </tr>
+
+          <!-- SECTION 7: SMALL PRODUCT NOTE -->
+          <tr>
+            <td class="sheet-pad" align="center" style="padding: 0 30px 18px 30px;">
+              <p style="margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; line-height: 18px; color: #777770; max-width: 480px; text-align: center;">
+                Signora provides secure authentication infrastructure for modern applications, helping developers add reliable OTP and OAuth authentication without building the entire authentication system from scratch.
+              </p>
+            </td>
+          </tr>
+
+          <!-- SECTION 8: DEVELOPER QUOTE -->
+          <tr>
+            <td class="sheet-pad" align="center" style="padding: 0 30px 24px 30px;">
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin: 0 auto; max-width: 460px;">
+                <tr>
+                  <td align="center" style="border: 1px dashed #DDDDCF; border-radius: 8px; padding: 10px 18px; background-color: #FCFCF9;">
+                    <p style="margin: 0; font-family: -apple-system, BlinkMacSystemFont, Georgia, serif; font-size: 12px; font-style: italic; line-height: 18px; color: #444440;">
+                      “Security should be simple for developers and effortless for users.”
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- SECTION 9: DOCKED INTEGRATED FOOTER (SAME CONTINUOUS SHEET) -->
+          <tr>
+            <td style="background-color: #F8F8F5; border-top: 1px solid #EAEAE2; padding: 18px 24px; text-align: center;">
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center">
+                <tr>
+                  <td align="center" style="padding-bottom: 6px;">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="vertical-align: middle; padding-right: 6px;">
+                          <div style="width: 7px; height: 7px; background-color: #FFC400; border-radius: 2px;"></div>
+                        </td>
+                        <td style="vertical-align: middle; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11px; font-weight: 700; color: #555550;">
+                          Powered by <span style="color: #111111;">Signora</span>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center">
+                    <p style="margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11px; line-height: 16px; color: #9A9A90;">
+                      &copy; 2026 Signora Technologies Inc. All rights reserved.<br />
+                      This automated authentication notice was requested on behalf of {{application_name}}.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+        </table>
+        <!-- End Single Unified Sheet Container -->
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>
+

@@ -12,6 +12,9 @@ from django.conf import settings
 from django.core import signing
 from django.utils import timezone
 
+import requests
+from django.template.loader import render_to_string
+
 from .models import AuthenticationActivity, EndUser, OTP, OAuthLoginExchange, OAuthState
 
 
@@ -229,6 +232,42 @@ def fetch_oauth_identity(provider, code):
         verified_email,
         profile.get("name") or profile.get("login", ""),
     )
+
+def send_otp_email(email, otp_code, application_name):
+    html_content = render_to_string(
+        "authentication/otp_email.html",
+        {
+            "otp": otp_code,
+            "application_name": application_name,
+        },
+    )
+
+    payload = {
+        "sender": {
+            "name": settings.BREVO_SENDER_NAME,
+            "email": settings.BREVO_SENDER_EMAIL,
+        },
+        "to": [
+            {
+                "email": email,
+            }
+        ],
+        "subject": f"Signora Auth Passcode - {application_name}",
+        "htmlContent": html_content,
+    }
+
+    response = requests.post(
+        "https://api.brevo.com/v3/smtp/email",
+        headers={
+            "accept": "application/json",
+            "api-key": settings.BREVO_API_KEY,
+            "content-type": "application/json",
+        },
+        json=payload,
+        timeout=10,
+    )
+
+    response.raise_for_status()
 
 def create_otp(user):
     otp_code = generate_otp()

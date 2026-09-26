@@ -181,6 +181,12 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "no-reply@localhost")
 
+# Brevo Transactional Email
+BREVO_API_KEY = os.getenv("BREVO_API_KEY", "")
+BREVO_SENDER_EMAIL = os.getenv("BREVO_SENDER_EMAIL", "")
+BREVO_SENDER_NAME = os.getenv("BREVO_SENDER_NAME", "Signora")
+
+
 OTP_LIFETIME_MINUTES = int(os.getenv("OTP_LIFETIME_MINUTES", "5"))
 OTP_RESEND_SECONDS = int(os.getenv("OTP_RESEND_SECONDS", "60"))
 END_USER_TOKEN_SECRET = os.getenv("END_USER_TOKEN_SECRET", SECRET_KEY)

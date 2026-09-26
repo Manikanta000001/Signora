@@ -4,12 +4,25 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework import status
 from django.conf import settings
-from django.core.mail import send_mail
 from django.shortcuts import redirect
 from django.utils import timezone
 from datetime import timedelta
 import jwt
 import logging
+from .services import (
+    OAUTH_PROVIDERS,
+    consume_oauth_state,
+    create_otp,
+    create_oauth_authorization_url,
+    fetch_oauth_identity,
+    issue_end_user_tokens,
+    log_activity,
+    refresh_end_user_access_token,
+    verify_otp,
+    create_oauth_login_exchange,
+    consume_oauth_login_exchange,
+    send_otp_email,
+)
 
 
 from .models import EndUser, OTP
@@ -23,19 +36,6 @@ from .serializers import (
     OAuthExchangeSerializer,
 )
 
-from .services import (
-    OAUTH_PROVIDERS,
-    consume_oauth_state,
-    create_otp,
-    create_oauth_authorization_url,
-    fetch_oauth_identity,
-    issue_end_user_tokens,
-    log_activity,
-    refresh_end_user_access_token,
-    verify_otp,
-    create_oauth_login_exchange,
-    consume_oauth_login_exchange,
-)
 from applications.services import get_application_for_api_key
 
 
@@ -87,14 +87,14 @@ class SendOTPView(APIView):
 
         otp, otp_code = create_otp(user)
 
-        send_mail(
-            subject="Your verification code",
-            message=f"Your verification code is {otp_code}. It expires in 5 minutes.",
-            from_email=getattr(settings, "DEFAULT_FROM_EMAIL", "no-reply@localhost"),
-            recipient_list=[email],
-            fail_silently=False,
+        send_otp_email(
+            email=email,
+            otp_code=otp_code,
+            application_name=application.name,
         )
+
         log_activity(application, "otp_sent", user)
+
 
         return Response(
             {
